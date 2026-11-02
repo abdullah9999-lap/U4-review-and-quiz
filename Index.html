@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unit 204: Logic Application Circuits Quiz</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--tx:#1b2433;--mu:#5d6b82;--pr:#1f5fbf;--ok:#1a8f4c;--no:#c93636;--bd:#dfe5ee;--ac:#eef4ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.7}
+header{background:linear-gradient(135deg,#1f5fbf,#2a8f8f);color:#fff;padding:20px 16px;text-align:center}
+header h1{margin:0;font-size:1.3rem}header p{margin:4px 0 0;opacity:.9;font-size:.9rem}
+main{max-width:760px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .4s}
+h2{margin:0 0 6px;font-size:1.08rem;color:var(--pr)}
+.q{border-top:1px dashed var(--bd);margin-top:12px;padding-top:12px}.q b{display:block;margin-bottom:6px}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--bd);border-radius:10px;padding:10px 12px;margin:6px 0;font:inherit;color:var(--tx);cursor:pointer}
+.opt:hover{border-color:var(--pr)}.opt.ok{background:#e6f6ec;border-color:var(--ok)}.opt.no{background:#fdeaea;border-color:var(--no)}
+.fb{margin-top:6px;font-size:.93rem}
+.ar{display:none;direction:rtl;text-align:right;color:#3a4a66;margin-top:4px}
+body.tr .ar{display:block}
+button.pri{background:var(--pr);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:inherit;cursor:pointer}
+input[type=text],input[type=password]{width:100%;padding:11px;border:1.5px solid var(--bd);border-radius:10px;font:inherit;margin:8px 0}
+.tg{border:2px solid var(--pr);background:#fff;color:var(--pr);border-radius:10px;padding:6px 14px;font:inherit;cursor:pointer;min-width:62px}.tg.on{background:var(--pr);color:#fff}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{border:1px solid var(--bd);padding:6px 8px;text-align:center}th{background:var(--ac)}
+.warn{background:#fff6e0;border:1px solid #f0d58a;border-radius:10px;padding:8px 12px;font-size:.9rem}
+.tabs{display:flex;gap:8px;margin:10px 0}.tabs button{flex:1}
+.hide{display:none}
+.q-img{margin:10px 0;padding:10px;background:#f9fbfd;border:1px dashed var(--bd);border-radius:10px;text-align:center}
+.q-img svg{max-width:100%;height:auto}
+</style>
+</head>
+<body>
+<header><h1>Unit 204: Logic Application Circuits</h1><p>Socrative & Quia Official Question Bank · 25 Randomized Questions</p></header>
+<main>
+<div id="login" class="card">
+<div id="wb" class="hide"><h2>Welcome back, <span id="wbn"></span></h2><div class="ar">أهلًا بعودتك. اضغط متابعة لتكمل من حيث توقفت.</div><button class="pri" id="wbc">Continue</button> <button class="tg" id="wbx" style="margin-top:8px">Not me</button></div>
+<div id="lf">
+<h2>Student Sign-in</h2>
+<div class="ar">اكتب اسمك كما سيظهر في سجل المعلم.</div>
+<input id="nm" type="text" placeholder="Full name" maxlength="60" autocomplete="name">
+<button class="pri" id="go">Start Quiz</button><div id="loginMsg" class="fb" aria-live="polite"></div>
+</div>
+</div>
+<div id="app" class="hide">
+<div class="tabs" style="align-items:center;flex-wrap:wrap"><span id="sst" class="mu" style="flex:1"></span><button class="tg" id="newTry">Start new attempt</button><button class="tg" id="tOut">Switch student</button></div>
+<div class="tabs"><button class="tg" id="tR">العربية: Show translation</button><button class="tg" id="tT">Teacher</button></div>
+<div id="quiz">
+<div class="card"><b id="hi"></b><div id="pt" style="color:var(--mu);font-size:.9rem"></div><div class="bar"><i id="pb"></i></div></div>
+<div id="qc"></div>
+<div id="sub" class="card hide"><h2>Submit your results</h2><div>You finished all 25 questions. Press Submit to send your results.</div><button class="pri" id="sb" style="margin-top:10px">Submit</button><div id="sr" class="fb"></div></div>
+</div>
+<div id="pin" class="card hide"><h2>Teacher panel</h2><input id="pi" type="password" inputmode="numeric" placeholder="PIN"><button class="pri" id="pg">Open</button><div id="pe" class="fb" style="color:var(--no)"></div></div>
+<div id="teach" class="hide"></div>
+</div>
+</main>
+<script type="module">
+const firebaseConfig={apiKey:"AIzaSyCWgFmLShB6GPDU0u74sBVLe0Z03DnhJpc",authDomain:"u4-quiz.firebaseapp.com",projectId:"u4-quiz",storageBucket:"u4-quiz.firebasestorage.app",messagingSenderId:"168007245306",appId:"1:168007245306:web:dad6c681be7f3cf25d9843"};
+let FB=null;
+window.__fbReady=(async()=>{try{const A=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),F=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");const fdb=F.getFirestore(A.initializeApp(firebaseConfig));FB={collection:n=>({doc:id=>({get:async()=>{const s=await F.getDoc(F.doc(fdb,n,id));return{exists:s.exists(),data:()=>s.data()}},set:v=>F.setDoc(F.doc(fdb,n,id),v)}),onSnapshot:(ok,err)=>F.onSnapshot(F.collection(fdb,n),s=>ok({docs:s.docs.map(d=>({id:d.id,data:()=>d.data()})),size:s.size}),err)}),findByName:async name=>{const snap=await F.getDocs(F.collection(fdb,"s2"));const matches=snap.docs.filter(d=>(d.data().name||"").trim().toLowerCase()===name.trim().toLowerCase());return matches.length?{id:matches[0].id,data:matches[0].data()}:null}};dbm=FB}catch(e){FB=null}})();
+const PINH="f001683718c38c47cd95d05d335f416a5680e7112d183cf5a0038b86f84d16b5";
+// الرسم البرمجي المتجاوب المباشر للأسئلة المعتمدة على صور
+const IMGS = {
+gates: ⁠<svg viewBox="0 0 450 200" width="100%"><g stroke="#1b2433" fill="none" stroke-width="2"><path d="M20,20 h30 a20,20 0 0,1 0,40 h-30 z"/><text x="32" y="45" font-size="12" fill="#1b2433">1 (AND)</text><path d="M140,20 h25 a20,20 0 0,1 0,40 h-25 z"/><circle cx="187" cy="40" r="4"/><text x="145" y="45" font-size="12" fill="#1b2433">2 (NAND)</text><path d="M260,20 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><circle cx="297" cy="40" r="4"/><text x="265" y="45" font-size="12" fill="#1b2433">3 (NOR)</text><path d="M20,100 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><text x="28" y="125" font-size="12" fill="#1b2433">4 (OR)</text><path d="M140,100 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><path d="M134,100 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><circle cx="177" cy="120" r="4"/><text x="142" y="125" font-size="11" fill="#1b2433">5 (EX-NOR)</text><path d="M260,100 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><path d="M254,100 q25,0 35,20 q-10,20 -35,20 q10,-20 0,-40 z"/><text x="265" y="125" font-size="11" fill="#1b2433">6 (EX-OR)</text><path d="M20,160 l30,15 l-30,15 z"/><circle cx="54" cy="175" r="4"/><text x="22" y="179" font-size="10" fill="#1b2433">7 (NOT)</text><path d="M140,160 h25 a20,20 0 0,1 0,40 h-25 z"/><circle cx="187" cy="180" r="4"/><text x="145" y="183" font-size="10" fill="#1b2433">8 (Schmitt)</text></g></svg>⁠,
+fullAdder: ⁠<svg viewBox="0 0 320 120" width="100%"><rect x="20" y="20" width="110" height="80" rx="8" fill="#eef4ff" stroke="#1f5fbf" stroke-width="2"/><text x="35" y="55" font-weight="bold" fill="#1f5fbf">Circuit 1</text><text x="35" y="75" font-size="12" fill="#5d6b82">(Half Adder)</text><rect x="180" y="20" width="110" height="80" rx="8" fill="#eef4ff" stroke="#1f5fbf" stroke-width="2"/><text x="195" y="55" font-weight="bold" fill="#1f5fbf">Circuit 2</text><text x="195" y="75" font-size="12" fill="#5d6b82">(Half Adder)</text><line x1="130" y1="40" x2="180" y2="40" stroke="#1f5fbf" stroke-width="2"/><text x="145" y="35" font-size="10">Sum</text><line x1="130" y1="80" x2="180" y2="80" stroke="#1f5fbf" stroke-width="2"/><text x="145" y="75" font-size="10">Cout</text></svg>⁠,
+counter4bit: ⁠<svg viewBox="0 0 360 90" width="100%"><g stroke="#1b2433" fill="#f3f5f9" stroke-width="2"><rect x="10" y="20" width="60" height="50" rx="5"/><rect x="90" y="20" width="60" height="50" rx="5"/><rect x="170" y="20" width="60" height="50" rx="5"/><rect x="250" y="20" width="60" height="50" rx="5"/><text x="25" y="50" font-size="12" fill="#1b2433">QA</text><text x="105" y="50" font-size="12" fill="#1b2433">QB</text><text x="185" y="50" font-size="12" fill="#1b2433">QC</text><text x="265" y="50" font-size="12" fill="#1b2433">QD</text><line x1="70" y1="45" x2="90" y2="45"/><line x1="150" y1="45" x2="170" y2="45"/><line x1="230" y1="45" x2="250" y2="45"/></g></svg>⁠,
+jkFlipFlop: ⁠<svg viewBox="0 0 160 120" width="100%"><rect x="30" y="15" width="100" height="90" rx="8" fill="#eef4ff" stroke="#1f5fbf" stroke-width="2"/><text x="40" y="40" font-weight="bold" fill="#1f5fbf">J</text><text x="40" y="85" font-weight="bold" fill="#1f5fbf">K</text><text x="40" y="62.5" font-size="10" fill="#1f5fbf">Ck</text><text x="110" y="40" font-weight="bold" fill="#1f5fbf">Q</text><text x="105" y="85" font-weight="bold" fill="#1f5fbf">Q'</text></svg>⁠,
+decoder2to4Table: ⁠<div class="sc"><table><tr><th>A1</th><th>A0</th><th>D3</th><th>D2</th><th>D1</th><th>D0</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr></table></div>⁠,
+sisoTable: ⁠<div class="sc"><table><tr><th>Input</th><th>Clock</th><th>QA</th><th>QB</th><th>QC</th><th>QD</th></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>2</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>3</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>4</td><td>0</td><td>0</td><td>0</td><td>1</td></tr></table></div>⁠
+};
+// بنك أسئلة Unit 204 المستخرج بالكامل من ملفات PDF المرفقة
+const RAW_BANK = [
+{q:"Which of the followings state the operation of J-K flip-flop?", qa:"أي مما يلي يصف استخدام قلاب J-K؟", o:["J-K flip-flop are used for counting application","J-K flip-flop are used for measuring current","J-K flip-flop are used for amplifying circuit","J-K flip-flop are used for measuring voltage."], a:0},
+{q:"When the 3rd CK pulse is applied to an Up-counter (fig. 3.3.20), what is the value of the outputs?", qa:"عند تطبيق نبضة الساعة الثالثة لعداد تصاعدي، ما قيمة الخرج؟", img:IMGS.counter4bit, o:["0011","0100","1100","1010"], a:0},
+{q:"Which of the followings state the operation of two inputs (A&B) EX-OR gate?", qa:"أي مما يلي يصف عمل بوابة EX-OR لمدخلين؟", o:["will only operate when (A or B), but NOT both, will give an output.","will only operate when one or both inputs are closed, but NOT one.","when both (A & B) are opened, but NOT one.","when both (A & B) are closed, but NOT one."], a:0},
+{q:"What does the output voltage of a Schmitt trigger device depends on?", qa:"على ماذا يعتمد جهد خرج مشغل شميت؟", o:["The value of the input voltage","The value of the input capacitance","The value of the output current","The value of the output gate"], a:0},
+{q:"What logic gates are used to make a Full Adder circuit?", qa:"ما البوابات المستخدمة لبناء جامع كامل (Full Adder)؟", o:["Two EX-OR, two AND gates and one OR gate","Two EX-OR, two OR gates and one AND gate","Three EX-OR, one OR gates and one AND gate","Two EX-NOR, two NOR gates and one AND gate"], a:0},
+{q:"Convert the following Hex number (3AC)16 into decimal number.", qa:"حوّل العدد السداسي عشر (3AC)16 إلى عشري.", o:["940","960","955","965"], a:0},
+{q:"A register enabling shifting of the bits within the register is referred to as:", qa:"المسجل الذي يتيح إزاحة البتات يسمى:", o:["Shift register","Shift Flip Flop","Amplifier","Register"], a:0},
+{q:"Which logic gate provides the 'Final SUM' in a Full Adder circuit?", qa:"أي بوابة/دائرة تعطي المجموع النهائي Sum في الجامع الكامل؟", img:IMGS.fullAdder, o:["Circuit 2 SUM","Circuit 1 SUM","Circuit 2 C out","Circuit 1 Cout"], a:0},
+{q:"What circuit is represented by the truth-table showing sequential shift from QA to QD?", qa:"ما نوع الدائرة التي يمثلها جدول الصدق عندما ينتقل البت تسلسلياً من QA إلى QD؟", img:IMGS.sisoTable, o:["4-bit Serial-in to Serial-out (SISO) Shift Register.","4-bit Serial-in to Parallel -out (SIPO) Shift Register","4-bit Parallel -in to Serial -out (PISO) Shift Register","4-bit Parallel -in to Parallel -out (PIPO) Shift Register"], a:0},
+{q:"What will be the output if the input J is at logic 0 and input K is at logic 1?", qa:"في قلاب JK، ما الخرج إذا كانت J=0 و K=1؟", img:IMGS.jkFlipFlop, o:["Reset","Set","Toggle","No Change"], a:0},
+{q:"Which two input logic gates will only operate when both of its inputs are closed or opened?", qa:"أي بوابة تعمل فقط إذا كان كلا المدخلين مغلقين أو مفتوحين معاً؟", o:["EX-NOR Gate","NOT Gate","EX-OR Gate","NAND Gate"], a:0},
+{q:"What circuit is the truth-table shown in figure representing?", qa:"ما الدائرة التي يمثلها جدول الصدق المرفق؟", img:IMGS.decoder2to4Table, o:["2-4 line decoder","4-2 line encoder","OR gate line encoder","2-7 line decoder"], a:0},
+{q:"Which of the following's logic gates can be used to compare the magnitude of two binary digits?", qa:"أي من البوابات التالية يمكن استخدامها لمقارنة قيمة بتين ثنائيين؟", o:["EX-NOR Gate","NAND Gate","NOR Gate","EX-OR Gate"], a:0},
+{q:"Which of the followings state the operation of two inputs (A&B) EX-NOR gate?", qa:"أي مما يلي يصف عمل بوابة EX-NOR بمدخلين؟", o:["when both (A and B) are closed OR opened will give an output.","when (A or B) is closed OR will give an output.","when (A or B) is opened will give an output.","when one or both (A and B) inputs are closed but NOT one."], a:0},
+{q:"In a J-K flip flop, what does the letter J stands for?", qa:"في قلاب JK، ماذا يعني الحرف J؟", o:["SET","RESET","CLEAR","CLOCK"], a:0},
+{q:"What will be the output state if the input D is set to logic 1?", qa:"في قلاب D، ما حالة الخرج عندما يكون المدخل D يساوي 1؟", o:["Set","Reset","Toggle","No Change"], a:0},
+{q:"In an 'Encoder truth-table' at any time, only ____ can be '1' in order to get the respective binary code.", qa:"في المشفّر، يجب أن يكون ____ نشطاً فقط للحصول على الكود الثنائي المناسب.", o:["One of its inputs","Two of its inputs","All of inputs","Three of its inputs"], a:0},
+{q:"What is the name of circuit shown in image with J, K and Ck inputs?", qa:"ما اسم الدائرة الظاهرة بالرمز المرفق؟", img:IMGS.jkFlipFlop, o:["J-K flip flop circuit","S-R Flip Flop","T Flip Flop","D Flip Flop"], a:0},
+{q:"What is made when a group of flip flops are connected together?", qa:"ما الذي يتكون عند توصيل مجموعة من القلابات معاً؟", o:["Registers","Flip Flops","NAND Gate","Encoder"], a:0},
+{q:"Convert the following binary number (111100)2 into decimal number.", qa:"حوّل العدد الثنائي (111100)2 إلى عشري.", o:["60","45","75","62"], a:0},
+{q:"Which logic gate can be represented by a series arrangement of switch connections?", qa:"أي بوابة منطقية تُمثّل بتوصيل مفاتيح على التوالي؟", o:["AND gate","NOR gate","NAND gate","NOT gate"], a:0},
+{q:"A shift register: how many clock pulses are required to have output QC=1 for a single bit '1' entering?", qa:"كم نبضة ساعة يلزم ليصبح الخرج QC=1 عند إدخال بت '1' لمسجل الإزاحة؟", o:["3","4","2","5"], a:0},
+{q:"Data, or information, can be transferred between ____.", qa:"يمكن نقل البيانات أو المعلومات بين ____.", o:["Registers","Bits","Gate","Parallel"], a:0},
+{q:"How many output lines a decoder circuit has, if it has 3 input lines?", qa:"كم خط خرج لفاك تشفير له 3 خطوط دخل؟", o:["8","4","1","2"], a:0},
+{q:"What is the name of the circuit shown: 4 J-K flip flops connected in series for data shifting?", qa:"ما اسم مسجل الإزاحة المصنوع من 4 قلابات JK متتالية؟", o:["4-bit Serial-in to Serial-out (SISO) Shift Register using J-K-flip flop","4-bit Parallel -in to Serial -out (PISO) Shift Register D-flip flop","4-bit Serial-in to Parallel -out (SIPO) Shift Register using J-K-flip flop","4-bit Serial-in to Serial-out (SISO) Shift Register using D-flip flop"], a:0},
+{q:"What is the base of Hexadecimal System?", qa:"ما أساس النظام السداسي عشر؟", o:["16","10","8","2"], a:0},
+{q:"Which of the following represents the number input lines for an encoder circuit having an output line = n?", qa:"أي مما يلي يعطي عدد خطوط الدخل لمشفر له n من المخارج؟", o:["2^n","n^2","2a","a^2"], a:0},
+{q:"Convert the octal number (135)8 into decimal number.", qa:"حوّل العدد الثماني (135)8 إلى عشري.", o:["93","99","90","85"], a:0},
+{q:"Convert the decimal number (93)10 into octal number.", qa:"حوّل العدد العشري (93)10 إلى ثماني.", o:["135","145","150","137"], a:0},
+{q:"What is the name of 'circuit 2' in a Full Adder built from two Half Adders?", qa:"ما اسم الدائرة رقم 2 في الجامع الكامل المكون من جامعين نصفيين؟", img:IMGS.fullAdder, o:["Half adder circuit","Full Adder Circuit","EX-OR Circuit","OR Circuit"], a:0},
+{q:"Identify the symbol of a two inputs OR gate from the logic gates reference (Gate #4).", qa:"حدد رمز بوابة OR بمدخلين من المخطط المرفق (رقم البوابة 4).", img:IMGS.gates, o:["4","3","6","7"], a:0},
+{q:"In an asynchronous 4-bit up-Counter, the clock circuit drives the ____.", qa:"في العداد غير المتزامن 4 بت، تغذي إشارة الساعة ____.", img:IMGS.counter4bit, o:["Input of 1st flip-flop (QA) only","Input of 4th flip-flop (QD) only","Input of 3rd flip-flop (QC) only","Input of 2nd flip-flop (QB) only"], a:0},
+{q:"Which of the followings is a Shift register type?", qa:"أي مما يلي نوع من مسجلات الإزاحة؟", o:["Parallel-In-Serial-Out (PISO)","Parallel-and-Parallel-circuit Out or (PAPO)","Serial-and-Serial-circuit or (SASC)","Serial-and-Parallel-circuit out or (SAPO)"], a:0},
+{q:"Shift registers can be constructed (made) using clocked ____.", qa:"يمكن بناء مسجلات الإزاحة باستخدام ____ بإنذار الساعة.", o:["D-type or J-K flip-flops","J-K or truth table","D-type or housing gates","Registers or transistors only"], a:0},
+{q:"Which of the following is the Boolean expression for an input (S1) NOT gate (Gate #7)?", qa:"ما التعبير البولياني لبوابة NOT (البوابة رقم 7)؟", img:IMGS.gates, o:["Output D = NOT S1","Output C","Output E","Output A"], a:0},
+{q:"Identify the symbol of a NOR gate (Gate #3).", qa:"حدد رمز بوابة NOR بمدخلين (البوابة رقم 3).", img:IMGS.gates, o:["3","8","6","5"], a:0},
+{q:"Identify the symbol of two inputs EX-NOR gate (Gate #5).", qa:"حدد رمز بوابة EX-NOR بمدخلين (البوابة رقم 5).", img:IMGS.gates, o:["5","1","3","2"], a:0},
+{q:"What logic gate provides 'Final CARRY' output in a Full Adder?", qa:"أي بوابة تنتج الحمل النهائي Cout في الجامع الكامل؟", img:IMGS.fullAdder, o:["OR Gate","EX-OR Gate","AND Gate","NAND Gate"], a:0},
+{q:"Which Flip Flop output triggers the CK input of the next Flip Flop in an asynchronous counter?", qa:"أي خرج للقلاب يشغّل مدخل الساعة CK للقلاب التالي في العداد غير المتزامن؟", o:["NOT Q (Q')","Q","CLK","QC"], a:0},
+{q:"What are the digit range values for Binary System?", qa:"ما مدى الأرقام في النظام الثنائي؟", o:["0 to 1","0 to 9","0 to F","0 to 7"], a:0},
+{q:"What are the digit range values for Octal System?", qa:"ما مدى الأرقام في النظام الثماني؟", o:["0 to 7","0 to F","0 to 1","0 to 9"], a:0},
+{q:"Where are Flip Flops used in?", qa:"أين تستخدم القلابات (Flip Flops)؟", o:["Computers and Communication systems","Building Blocks of housing systems","In Turbine Systems","Power Generation systems."], a:0},
+{q:"What are the digit range values for Hexadecimal System?", qa:"ما مدى الأرقام في النظام السداسي عشر؟", o:["0 to F","0 to 1","0 to 7","0 to 9"], a:0},
+{q:"Which Logic Gate has only one input?", qa:"أي بوابة منطقية لها مدخل واحد فقط؟", o:["NOT Gate","AND Gate","OR Gate","EX-OR Gate"], a:0},
+{q:"When Input A=1, B=1 & Cin=1 in a Full Adder, what will be the value of Sum and Carry out?", qa:"في الجامع الكامل عند A=1, B=1, Cin=1، ما قيم المجموع والحمل؟", o:["Sum=1 and Carry out=1","Sum=0 and Carry out=1","Sum=0 and Carry out=0","Sum=1 and Carry out=0"], a:0},
+{q:"A NOR gate could be made by connecting an OR Gate output in series with ____.", qa:"تتكون بوابة NOR بتوصيل خرج بوابة OR على التوالي مع ____.", o:["NOT Gate","NAND Gate","AND Gate","OR Gate"], a:0},
+{q:"What is the Decimal Representation of the Binary number 110111?", qa:"ما قيمة العدد الثنائي 110111 بالنظام العشري؟", o:["55","53","48","52"], a:0},
+{q:"How many input lines an encoder circuit has, if it has 4 output lines?", qa:"كم خط دخل لمشفر له 4 خطوط خرج؟", o:["16","8","4","2"], a:0},
+{q:"Convert 68 decimal number into Binary Coded Decimal (BCD).", qa:"حوّل العدد العشري 68 إلى ترميز BCD.", o:["0110 1000","0001 0110","0101 0001","0101 1000"], a:0},
+{q:"Convert 142 decimal number into Binary Coded Decimal (BCD).", qa:"حوّل العدد العشري 142 إلى ترميز BCD.", o:["0001 0100 0010","0001 0110 0010","0010 0100 0001","0001 0110 0111"], a:0},
+{q:"Convert CF (Hex number) into decimal number.", qa:"حوّل العدد السداسي عشر CF إلى عشري.", o:["207","253","235","225"], a:0},
+{q:"Convert Decimal 271 into Hex number.", qa:"حوّل العدد العشري 271 إلى سداسي عشر.", o:["10F","10E","105","10D"], a:0},
+{q:"Convert 252 (decimal number) into octal number.", qa:"حوّل العدد العشري 252 إلى ثماني.", o:["374","378","347","355"], a:0},
+{q:"Convert 166 (decimal number) into octal number.", qa:"حوّل العدد العشري 166 إلى ثماني.", o:["246","264","255","268"], a:0},
+{q:"Convert 476 (octal number) into decimal number.", qa:"حوّل العدد الثماني 476 إلى عشري.", o:["318","354","381","338"], a:0},
+{q:"Convert 1011 (binary number) into decimal number.", qa:"حوّل العدد الثنائي 1011 إلى عشري.", o:["11","12","13","19"], a:0},
+{q:"Convert 101101 (binary number) into decimal number.", qa:"حوّل العدد الثنائي 101101 إلى عشري.", o:["45","49","48","55"], a:0},
+{q:"Convert 55 (decimal number) into binary number.", qa:"حوّل العدد العشري 55 إلى ثنائي.", o:["110111","110101","111011","100110"], a:0},
+{q:"Convert 29 (decimal number) into binary number.", qa:"حوّل العدد العشري 29 إلى ثنائي.", o:["11101","10010","11110","11001"], a:0},
+{q:"How do you convert decimal to octal?", qa:"كيف تحوّل من النظام العشري إلى الثماني؟", o:["Divide by 8","Multiple by 8","Add by 8","Subtract by 8"], a:0},
+{q:"What is the output of a NOT gate when input is 1?", qa:"ما خرج بوابة NOT عندما يكون المدخل 1؟", o:["0","1"], a:0},
+{q:"The output of an AND gate is HIGH only when:", qa:"يكون خرج بوابة AND عالياً (HIGH) فقط عندما:", o:["All inputs are HIGH","All inputs are LOW","Inputs are different","Any input is HIGH"], a:0},
+{q:"The output of an OR gate is LOW only when:", qa:"يكون خرج بوابة OR منخفضاً (LOW) فقط عندما:", o:["All inputs are LOW","Any input is HIGH","All inputs are HIGH","Inputs are unequal"], a:0},
+{q:"The output of an Ex-NOR gate is HIGH when:", qa:"يكون خرج بوابة EX-NOR عالياً (HIGH) عندما:", o:["Inputs are equal","Inputs are unequal","All inputs are LOW","All inputs are HIGH"], a:0},
+{q:"Which numbering system uses base 10?", qa:"أي نظام عد يستخدم الأساس 10؟", o:["Decimal","Binary","Octal","Hexadecimal"], a:0}
+];
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuf(r,a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function buildQs(seed){
+const r = rng(seed);
+const prepared = RAW_BANK.map((item, idx)=>{
+const correctOpt = item.o[item.a];
+const shuffledOpts = shuf(r, item.o);
+return {
+id: "q"+idx,
+q: item.q,
+qa: item.qa,
+img: item.img || null,
+o: shuffledOpts,
+a: shuffledOpts.indexOf(correctOpt),
+x: "Correct answer: " + correctOpt
+};
+});
+// اختيار 25 سؤالاً عشوائياً لكل محاولة جديدة
+return shuf(r, prepared).slice(0, 25);
+}
+const $=id=>document.getElementById(id);
+let me={name:"",uid:"",seed:0,round:1,done:[],log:[],submitted:false},qs=[],cur=0,docRef=null,unsub=null,unlocked=false,lastSnap=null;
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function rid(){let v=lsGet("u4id");if(!v){v="s"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);lsSet("u4id",v)}return v}
+function nid(n){n=n.toLowerCase().replace(/[\u064B-\u065F\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/\s+/g," ").trim();let a=5381,b=52711;for(let i=0;i<n.length;i++){const c=n.charCodeAt(i);a=((a33)^c)>>>0;b=((b31)+c)>>>0}return "n"+a.toString(36)+b.toString(36)+n.length}
+function esc(s){const d=document.createElement("div");d.textContent=String(s);return d.innerHTML}
+function nextIdx(){for(let i=0;i<qs.length;i++)if(me.done.indexOf(qs[i].id)<0)return i;return -1}
+function prog(){const n=me.done.length;("pb").style.width=(n/qs.length*100)+"%";("pt").textContent="Completed "+n+" of "+qs.length+" questions";$("sub").classList.toggle("hide",n<qs.length)}
+function showQ(){
+prog();const i=nextIdx(),box=$("qc");box.textContent="";
+if(i<0){box.innerHTML="<div class='card'><b>All 25 questions finished! ✔</b></div>";return}
+cur=i;const q=qs[i];const c=document.createElement("div");c.className="card";
+let imgHtml = q.img ? ⁠<div class="q-img">${q.img}</div>⁠ : '';
+c.innerHTML="<div style='color:var(--mu);font-size:.85rem'>Question "+(me.done.length+1)+" of "+qs.length+"</div><div class='q' style='border:0;margin-top:4px'><b>"+q.q+"</b><div class='ar'>"+q.qa+"</div>"+imgHtml+"<div class='os'></div><div class='fb'></div><div class='nx'></div></div>";
+box.appendChild(c);const os=c.querySelector(".os"),fb=c.querySelector(".fb");
+q.o.forEach((o,k)=>{
+const b=document.createElement("button");b.className="opt";b.innerHTML="<span>"+esc(o)+"</span>";
+b.onclick=()=>pick(q,k,b,os,fb,c);os.appendChild(b);
+});
+}
+function pick(q,k,b,os,fb,c){
+if(k=q.a){
+me.done.push(q.id);
+[...os.children].forEach((x,j)=>{x.disabled=true;if(j=q.a)x.classList.add("ok")});
+fb.innerHTML="<span style='color:var(--ok)'>✔ Correct.</span>";
+const n=document.createElement("button");n.className="pri";n.style.marginTop="8px";
+n.textContent=me.done.length>=qs.length?"Finish":"Next question →";
+n.onclick=showQ;c.querySelector(".nx").appendChild(n);prog();
+}else{
+me.log.push({q:q.q,p:q.o[k],c:q.o[q.a]});
+b.classList.add("no");b.disabled=true;
+fb.innerHTML="<span style='color:var(--no)'>✘ Not correct, try again.</span><div class='ar'>إجابة غير صحيحة، حاول مرة أخرى.</div>";
+}
+save();
+}
+function payload(){return{name:me.name,progJson:JSON.stringify({seed:me.seed,round:me.round,done:me.done,log:me.log}),done:me.done.length,total:qs.length,wrongTotal:me.log.length,round:me.round,submitted:!!me.submitted,at:Date.now()}}
+function save(){
+lsSet("u4s_"+me.uid,JSON.stringify(me));
+if(docRef){docRef.set(payload()).catch(()=>{});}
+}
+$("sb").onclick=async()=>{
+me.submitted=true;save();
+$("sr").innerHTML="<span style='color:var(--ok)'>✔ Submitted successfully!</span>";
+};
+async function start(){
+const n=("nm").value.trim();if(!n){("nm").focus();return}
+me.name=n;me.uid=nid(n);lsSet("u4last",JSON.stringify({n:n}));
+if(window.__fbReady)await Promise.race([window.__fbReady,new Promise(r=>setTimeout(r,4000))]);
+if(dbm)docRef=dbm.collection("s2").doc(me.uid);
+("login").classList.add("hide");("app").classList.remove("hide");$("hi").textContent="Welcome, "+n;
+me={name:n,uid:me.uid,seed:Math.floor(Math.random()*2147483000)+1,round:1,done:[],log:[],submitted:false};
+qs=buildQs(me.seed);showQ();save();
+}
+("go").onclick=start;
+(function(){let L=null;try{L=JSON.parse(lsGet("u4last")||"null")}catch(e){}if(L&&L.n){("wbn").textContent=L.n;("wb").classList.remove("hide");("lf").classList.add("hide");("wbc").onclick=()=>{("nm").value=L.n;start()};("wbx").onclick=()=>{lsSet("u4last","");("wb").classList.add("hide");$("lf").classList.remove("hide")}}})();
+$("tOut").onclick=()=>{lsSet("u4last","");location.reload()};
+function newRound(){
+me.round++;me.seed=Math.floor(Math.random()*2147483000)+1;me.done=[];me.log=[];me.submitted=false;
+qs=buildQs(me.seed);$("sr").innerHTML="";showQ();save();
+}
+$("newTry").onclick=()=>{if(confirm("Start a new 25-question attempt from the Unit 204 bank?"))newRound()};
+("tR").onclick=()=>{const on=document.body.classList.toggle("tr");("tR").classList.toggle("on",on);("tR").textContent=on?"العربية: Hide translation":"العربية: Show translation"};
+$("tT").onclick=()=>{if(unlocked){$("quiz").classList.add("hide");("teach").classList.remove("hide");loadTeach()}else{("quiz").classList.add("hide");("pin").classList.remove("hide");$("pi").focus()}};
+async function sha(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+("pg").onclick=async()=>{
+let ok=false;try{ok=(await sha("u4-"+("pi").value.trim()))===PINH}catch(e){}
+if(ok){unlocked=true;("pin").classList.add("hide");("teach").classList.remove("hide");loadTeach()}
+else $("pe").textContent="Wrong PIN.";
+};
+function loadTeach(){
+if(!dbm)return;
+dbm.collection("s2").onSnapshot(snap=>{
+const rows=snap.docs.map(d=>d.data());
+let h="<div class='card'><h2>Student Results Overview</h2><div class='sc'><table><tr><th>Name</th><th>Progress</th><th>Errors</th><th>Status</th></tr>";
+rows.forEach(r=>{h+="<tr><td>"+esc(r.name)+"</td><td>"+(r.done||0)+"/25</td><td>"+(r.wrongTotal||0)+"</td><td>"+(r.submitted?"Submitted":"In Progress")+"</td></tr>"});
+$("teach").innerHTML=h+"</table></div></div>";
+});
+}
+</script>
+</body>
+</html>
